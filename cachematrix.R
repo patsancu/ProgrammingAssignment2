@@ -13,15 +13,19 @@ makeCacheMatrix <- function(x = matrix()) {
     set <- function(y) {
         x <<- y
         inv <<- NULL
+        changed <<- TRUE #indicates whether just the matrix changed, or both the matrix and the inverse
     }
     get <- function() x
     setinverse <- function(inverse){        
         inv <<- inverse
+        changed <<- FALSE
     }
     getinverse <- function() inv
+    hasChanged <- function() changed
     list(set = set, get = get,
          setinverse = setinverse,
-         getinverse = getinverse)    
+         getinverse = getinverse,
+         hasChanged = hasChanged)    
 }
 
 
@@ -31,7 +35,7 @@ cacheSolve <- function(x, ...) {
     ## Return a matrix that is the inverse of 'x'
     inv <- x$getinverse()
     #The assignment states that the matrix must not have changed
-    if (! is.null(inv) ){
+    if (! is.null(inv) && ! x$hasChanged() ){
         message("Getting cached inverse.")
         return(inv)
     }
